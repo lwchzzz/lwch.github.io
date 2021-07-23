@@ -1,0 +1,472 @@
+---
+title: "Further Git and GitHub"
+output: html_document
+author: Andrew Edwards
+---
+
+```{r echo = FALSE}
+
+# We should list the required packages here, it's best to load them up front.
+# library(...)
+
+# From  https://bookdown.org/yihui/rmarkdown-cookbook/font-color.html
+#  to then say `r colorize("some words in red", "red")` etc. ("red" is the
+#  default so you don't need to say that.
+colorize <- function(x, color = "red") {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+      x)
+  } else x
+}
+```
+
+## Beyond the basics
+
+Here are some Git and GitHub concepts and tips that go beyond the basics that we
+just covered.
+
+### Workflow tips
+
+Realise that you still edit and save your files in the usual way on your
+  computer. If you don't do Git commits you will still have the latest versions
+  of your files on your computer (as you would if you weren't using Git). So if
+  you do get stuck with Git you can carry on working as normal (though you
+  probably do want to try and fix it at some point).
+
+When collaborating:
+
+* If working closely with others, when you start each day (or after a break)
+  then make sure you are up to date and have all their commits. Refresh the
+  GitHub page for you repository, and `git fetch` (or just `git f`)and `git clone` if needed. (To
+  be safe you can `git f` and `git s` to check).
+* We find it helpful to co-ordinate our work (Slack is useful for this, or use
+  GitHub Issues for complex discussion -- see below), so that if multiple people
+  are working at the same time, you are at least not working on exactly the same
+  parts, just to reduce conflicts.
+* Commit fairly frequently and write helpful commit messages (so your colleagues
+  get an idea of what you've done in each commit). Push less frequently, and
+  _don't push code that doesn't work_ -- that will annoy your colleagues. And
+  then they (and probably you) may both spend time fixing it.
+* To see who last edited a particular piece of code, when viewing the file on
+  GitHub click `r colorize("Blame")` (you can even click on the square icon to
+  go to the previous commit that changed that line):
+
+![](../module-1-git/images/blame.png){width=100%}
+
+**GitHub Issues**
+
+GitHub _Issues_ are very useful for discussing issues with your repo. For our
+annual Pacific Hake assessment we have used them extensively over the years:
+
+![](../module-1-git/images/hakeIssues21.png){width=100%}
+
+The Issues tab lists our current 'Open' issues -- we have 20, of which five (the
+most recently posted) are
+shown here. We are currently in-between assessments (and not working on it), so
+we have created Issues that we want to think about or deal with for next
+year. This avoids forgetting about ideas or losing them in old emails.
+
+Issues are intuitive to use. There is a bright green 'New Issues' button to
+create new ones, you give a title and then write some details, people can reply,
+you can assign people to look at them, and you can close them. In the above
+screenshot you can see that we have closed 815 issues (this was over several years).
+
+Useful tip: when doing a commit that refers to an Issue, if you refer to the
+Issue number (with `#<number>`) in your commit message, then after pushing that commit the Issue on
+GitHub will automatically mention and link to the commit:
+
+`git com "Add more options to fancy_function(), #21."`
+
+will mention the commit when you look at the issue. You can even automatically
+close the issue by saying `closes #21` in your commit message:
+
+`git com "Add more options to fancy_function(), closes #21."`
+
+Issues are particularly useful to avoid cluttering up code with commented notes
+or ideas that you may easily not come back to, or avoiding endless emails that
+end up getting overlooked. You don't have to fix an Issue to close it, you can
+decide not to pursue, but at least you have made a decision.
+
+(We also use Slack a lot to communicate, but moreso for quick questions or
+bouncing ideas around -- Issues are better for stuff that you want to come back
+to at some point).
+
+You may receive emails regarding Issues, but if you use GitHub a lot you will
+see Notifications (the blue dot on the bell in the top-right corner when signed
+in on GitHub) and that
+will show you new Issues of repositories you are involved with, or if anyone has
+updated an Issue.
+
+
+**GitHub organizations**
+
+If you will frequently collaborate with colleagues, you can create an
+Organization on GitHub and invite collaborators to it (click on your GitHub
+photo in the top-right corner, Settings, Organizations). Then they will
+automatically have access to all repositories created under the
+Organization. You can choose the security settings.
+
+
+### So I've made some changes but don't really want to keep them -- git stash
+
+If you've changed some code but _have not committed it_, and then maybe got in a
+mess and just want to go back to your last commit, you can _stash_ your changes
+```
+git stash
+```
+and to include a message (for your future self):
+```
+git stash save "Message"
+```
+
+This stashes them away such that they can be retrieved later
+This is handy. You may _think_ you don't want to keep those changes, but
+sometimes you may later wish you had kept them somehwere.
+Note this only for files that Git is tracking (i.e. files that have been added
+at some point).
+
+You can have multiple stashes, seen by doing:
+```
+git stash list
+```
+
+To retrieve the last stash:
+
+`git stash pop`
+
+TODO: check rules for other stashed things.
+
+TODO: Often you're working on something but it's not finished, but you want to
+push it. Stash, then make branch then copy files in. Tricky to do all with git,
+so do manually.
+
+TODO: see my README for details, and test what to do
+
+### Pull requests
+
+TODO
+
+### The power to go back
+
+With Git you can revert back to any previous state of your repository.
+This is `r colorize("very powerful")`, though slightly
+`r colorize("scary")` at first.
+
+Do this with your test repository, that should have some files in it from the
+  earlier excercise:
+
+* `git s` to make sure you are all up-to-date
+      (`commit` and/or `push` if necessary).
+* In File Explorer (or whatever you use) look at your repository, you should see
+    all your files, including the `new-stuff\` directory.
+* Look at the commit tab on GitHub for your test repo and click on the clipboard
+      icon to copy the HASH number thingy to the clipboard .
+* In Git shell: `git checkout HASH` (where `HASH` is the pasted HASH, or `git co
+  HASH` using our Alias)
+* Look at File Explorer again -- your `new-stuff` directory should
+      have ... disappeared!!
+* (If it hasn't disappeared then open it -- the test files, i.e. `test1.r`,
+      `test2.r`, etc. should be gone, but your text editor may
+      have saved backup versions; manually delete them plus the
+      `new-stuff/` directory.)
+* You are now back to the very first version of your repo!
+
+Powerful and scary.
+
+Now, to get your files back to the most recent version you had committed:
+
+* `git checkout main`   (it used to be `git checkout master`, the names have recently changed).
+
+That's it! Check that your files are back. All this means that you can
+`r colorize("revert to any previous commit in your repository")`.
+
+This is very reassuring. For example you have some complex code that you realise
+  is now a complete mess and you want to go back to yesterday's version of everything.
+
+In practice you rarely actually do this, but it's very comforting to know
+  that you can.
+
+Consequently, your workflow is less cluttered and more tractable than having
+  to save multiple versions of the same files with dates in the filename, such
+  as this nightmare:
+
+![](../module-1-git/images/EAversions.png){width=100%}
+
+**Retrieving older work in practice**
+
+I think there are fancy ways that Git can replace a current file with a version
+from an earlier commit. But, in practice (especially since you rarely want to do
+this) it is a bit safer to do the following:
+
+* Say you are up-to-date (`git s` says all is good), but your program
+  `my_code.R` just isn't working and you want to go back to the version you had
+  yesterday at commit number `abc123`.
+* `git co abc123` (or `git checkout abc123`) to checkout the earlier commit,
+  which includes the old version of `my_code.R` that you want get.
+* Copy `my_code.R` to a new file `my_code_old.R`. In the shell you can just do
+  this with `cp my_code.R my_code_old.R`.
+* Do NOT edit `my_code.R` or make any changes, as you may end up with a scary
+  `DETACHED HEAD` warning.
+* `git co main` to checkout the latest version again.
+* Since you have NOT done `git add my_code_old.R`, Git is not tracking
+  `my_code_old.R` and so it is just sitting in your folder as normal.
+* Now you can manually copy what you want from `my_code_old.R` into `my_code.R`
+  to fix your problem. It could be the full file, or just some part of it.
+* Then commit as normal.
+* At some point you can delete `my_code_old.R` so it is not hanging around, but
+  you don't have to. (Though maybe make a note in it as to which commit it was
+  from, in case you do need it again).
+
+### So how does Git do all this?
+
+By now you're probably wondering how Git keeps track of everything.
+Git does not keep versions of code, it keeps _commits_. The commits
+are kept track of using a HASH key which is a generated 40-digit key in
+hexadecimal (base 16). The hashes are
+what you see on GitHub and in various places when you use Git shell.
+
+By stitching all the commits back together again, Git can recreate all your code.
+
+There is a hidden `.git/` directory in each repository.
+Look at the `.git/objects/` subdirectory. Each subdirectory name is the
+first two digits of a HASH. The rest of the digits of the HASH are the filenames in the
+subdirectory.
+
+You can basically think of the hashes as representing `commits` (apparently they can also
+be `blobs` and `trees`, whatever they might be).
+I think of the files in the subdirectories containing the `r colorize("differences")` between each commit.
+
+Because of these structures, Git can go back and `r colorize("rebuild")` any or
+      all files at any `commit`, and even have different directory
+      structures at each commit.
+
+Since Git is keeping track of differences between files, this all works best for
+      plain ASCii (text) files, such as `.R`, `.txt`, `.Rmd`, etc.
+
+Git does work for binary files, such as `.xls`, `.docx`, `.RData`, but since
+      changes to the files are not easily saved (Git essentially has to resave
+      the whole file at each commit), this is not very efficient and may make
+      your repository large. Such files will be fully resaved every time they
+      are changed. Think of a binary file as something that you cannot open in a
+      text editor and read (it does not contain simple ASCii letters and numbers).
+
+Exceptions: often you may have an image or photo or other type file that you need to share for a
+      document, but it isn't going to keep changing. So that's fine to commit.
+
+An example of why you should not commit binary files:
+
+* A collaborator was running some R code (and correctly committed the `.R` files
+  so that I could run it), but also committed the results, which included
+  `.pdf`, `.png` and `.RData` files, which can get quite large.
+* But, these latter files got updated every time the code was run. So changing
+  one line of the `.R` code (which Git deals with very efficiently), and running
+  that code and committing, resulted in the new `.pdf` etc. files being fully
+  saved (since Git cannot just save the difference from the last commit because
+  they are binary files). Even
+  if, say, one point changes on a figure in a graph in a `.pdf` file, Git has to
+  save the whole new version.
+* This ended up with `.git/objects/pack` (whatever that might be!) being 2.8Gb.
+* I needed space quickly on my computer so just deleted four files in
+  `.git/objects/pack`, which freed up 1.6Gb.
+* Note that I still had the actual final versions of files (as you would
+     if not using Git), but just not the full repository history.
+* However, when I tried to later do some work and then `commit` I got lots of
+'fatal' errors with scary messages like `bad object HEAD` and the awesomely titled `You are
+on a branch yet to be born`:
+
+![](../module-1-git/images/notGood.png){width=100%}
+
+I just had to start again from scratch (reclone I think). Take-home message:
+
+**Don't mess with the .git directory!!**
+
+### Git terminology
+
+At some point you will likely need to search online for some help (often
+questions are posted and answered on the excellent 'stackoverflow' website).
+A bit more understanding of terminology will help you.
+
+Remember that Git keeps _commits_.
+Several of these commits have pointers to them that have special names:
+
+* **HEAD** points to the commit you are currently on in the Git shell.
+* **main** or **master** is the default branch when you set up a repository on
+    GitHub (there are two names because of recent changes on GitHub).
+
+### Branching
+
+So far we have only worked on the **main** branch. Sometimes you want to create
+a new branch that branches off from the **main** branch. It's bit like a tree
+branching, except that at some point you want your new branch to be merged back
+into **main**.
+
+For example, you may want to try adding some new code to your project, but don't
+want to break what is already there. You may do this even if working alone, but
+it's especially useful if you are collaborating, or if, say, you have an R
+packages hosted on GitHub that anyone may be downloading -- you don't want to
+annoy them by pushing experimental code that doesn't work.
+
+So you would create a new branch, work on that new branch (i.e. commit
+changes to the new branch), and when you are happy with your new changes you can
+easily merge it all back into **main**.
+
+**Working on a new branch**
+
+When creating a new branch, your starting point is identical to the branch you
+were when you created the new one.
+
+In the Git shell navigate into your test repository:
+
+  `cd test`
+
+Depending on your set up, you should see `main` indicated somewhere (if not do
+  `git s` and it should say `On branch main`.
+
+Make sure you are up-to-date and have committed all changes (`git s`, and
+  `commit` if necessary).
+
+Create a new branch called _temp_, this will be based off the latest commit of the  _main_
+  branch you are currently on:
+
+  `git checkout -b temp`
+
+(We have an alias for that: `  `git cb temp`).
+
+You will be automatically placed in the new branch called _temp_, and commits
+  you make will now occur in that branch only.
+
+Make and `commit` some changes (e.g. add a new file) -- these will now be on
+  your _temp_ branch.
+
+You can push to GitHub. The first time you try `git p`, the Git shell will
+  tell you that you need to type the following so that future pushes go to the
+  new branch:
+
+`git --set-upstream origin BRANCH-NAME`
+
+Check the GitHub webpage to see that your branch was pushed. You repository
+  page (that will still be looking at your _main_ branch) may tell you that
+  there is a _temp_ branch with more recent commits than _main_. If not then if
+  you click on the _main_ drop-down menu:
+
+![](../module-1-git/images/main-branch.png){width=100%}
+
+it should give you the option to look at your new _temp_ branch. (The '1 branch'
+in the above image should also say '2 branches').
+
+You can now view your new file in your new _temp_ branch on GitHub.
+
+A graphical way to see and understand branching is to click on
+  Insights--Network to see the Network graph.
+
+The Network Graph is a useful visualization tool, where each commit is shown as
+a point on the graph (the numbers along the top are the dates). You can hover
+your mouse over a commit to see who committed it and the commit message. You can
+click to see full details of the commit. The Network Graph is particularly
+useful if you or others are working on multiple branches, or to check details
+about merges.
+
+Okay, back in your Git shell you can easily switch back to your original _main_
+branch:
+
+`git checkout main` (or the alias `git co main`).
+
+You will see that the file you just added is gone, because it
+`r colorize ("only exists in the _temp_ branch")`
+at this moment.
+
+Imagine that in your _temp_ branch you did several commits to create a new
+function in your code, or have added some new text to a report. Now you are
+happy with what you've done you want to merge it back into the _main_ branch.
+
+To view all local branches:
+
+`git branch`
+
+There is an asterisk next to the branch you are currently in.
+
+To switch to another branch (_main_ in our case):
+
+`git checkout main`
+
+To combine the changes from the _temp_ branch:
+
+`git rebase temp`
+
+or
+
+`git merge temp`
+
+Now the file you created in the _temp_ branch now appears in the _main_
+branch. All commits done in the _temp_ branch will now be in the _main_ branch
+as well.
+
+If there was a merge conflict, you must fix it at this point (see earleir).
+
+Once you've merged your _temp_ branch into _main_, you don't really need _temp_
+any more and so it is good protocol to delete to keep things tidy:
+
+`git branch -d temp`
+
+If you have unmerged changes in a branch, you will not be allowed to delete it,
+but Git shell will tell you the command to forcibly delete it:
+
+`git branch -D temp`
+
+Warning -- you won't be able to get any of those changes back once you do this.
+
+To remove a branch entirely from GitHub:
+
+`git p origin --delete BRANCH-NAME`
+
+
+### Undoing stuff
+
+If you make a commit followed by other commits, then realize you want to undo the earlier commit, you use _revert_:
+
+`git revert HASH`
+
+where `HASH` is the hash for the commit you want to undo. Remember that Git shell is smart enough that you only need the first five digits:
+
+`git revert 1ef1d`
+
+This actually creates a new commit with the automatic message
+
+`Revert "<previous commit message>"`.
+
+Obviously, you have to be careful with this if you're changing something that
+was a few commits back, as you might mess up your code.
+
+**Undoing changes not yet committed**
+
+If you've made a mess in your working directory and you want to change
+everything back to the way it was on the last commit:
+
+`git reset --hard HEAD`
+
+If you've messed up a single file and just want that one file to go back to the way it was on the last commit:
+
+`git checkout HEAD <filename_to_restore>`
+
+Warning -- running these commands will delete the changes you have made. Since
+you have not committed any changes, they will be lost. Make sure you are certain
+you don't need the changes before running these commands. If you aren't sure if
+you need the changes again in the future, use `git stash` instead.
+
+**Changing the commit message in the last commit**
+
+If you make a commit then realize you want to change it (add more information,
+fix something that will confuse your colleagues, fix something that will confuse
+you tomorrow), you can change the commit message:
+
+`git commit --amend -m "Correct message."`
+
+This only works on the last commit.
+
+If you already pushed the commit before realizing that the message needs modification, do this:
+
+`git p --force`
+
+after making the amendment to the commit message.
